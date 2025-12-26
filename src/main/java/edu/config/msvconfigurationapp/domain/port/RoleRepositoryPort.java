@@ -1,0 +1,13 @@
+package edu.config.msvconfigurationapp.domain.port;
+
+import edu.config.msvconfigurationapp.domain.model.RoleRequest;
+import edu.config.msvconfigurationapp.domain.model.RoleResponse;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+public interface RoleRepositoryPort {
+    Flux<RoleResponse> findAll();
+    Mono<RoleResponse> findById(String id);
+    Mono<RoleResponse> save(RoleRequest request);
+    Mono<Void> deleteById(String id);
+}

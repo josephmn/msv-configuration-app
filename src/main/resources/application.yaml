@@ -1,3 +1,13 @@
 spring:
   application:
     name: msv-configuration-app
+
+  r2dbc:
+    url: r2dbc:sqlserver://localhost:1436/EduPlatform
+    username: sa
+    password: Sgr9cl4v3s
+
+logging:
+  level:
+    root: INFO
+#    io.r2dbc.mssql: INFO
