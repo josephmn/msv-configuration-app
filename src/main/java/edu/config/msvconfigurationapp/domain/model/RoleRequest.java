@@ -15,7 +15,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RoleRequest {
-    private String id;
     private String nombre;
     private Boolean estado;
 }

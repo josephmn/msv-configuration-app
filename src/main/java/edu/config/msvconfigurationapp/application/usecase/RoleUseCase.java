@@ -21,16 +21,20 @@ public class RoleUseCase {
 
     private final RoleRepositoryPort repository;
 
-    public Mono<RoleResponse> save(RoleRequest request) {
-        return repository.save(request);
+    public Flux<RoleResponse> findAll() {
+        return repository.findAll();
     }
 
     public Mono<RoleResponse> findById(String id) {
         return repository.findById(id);
     }
 
-    public Flux<RoleResponse> findAll() {
-        return repository.findAll();
+    public Mono<RoleResponse> save(RoleRequest request) {
+        return repository.save(request);
+    }
+
+    public Mono<RoleResponse> update(String id, RoleRequest request) {
+        return repository.update(id, request);
     }
 
     public Mono<Void> deleteById(String id) {

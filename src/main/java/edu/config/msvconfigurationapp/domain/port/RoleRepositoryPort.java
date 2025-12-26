@@ -15,5 +15,6 @@ public interface RoleRepositoryPort {
     Flux<RoleResponse> findAll();
     Mono<RoleResponse> findById(String id);
     Mono<RoleResponse> save(RoleRequest request);
+    Mono<RoleResponse> update(String id, RoleRequest request);
     Mono<Void> deleteById(String id);
 }

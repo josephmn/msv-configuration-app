@@ -28,6 +28,14 @@ public class RoleRepositoryAdapter extends BaseSpRepository implements RoleRepos
         EXEC security.spRoleSave @v_name = :name, @v_status = :status
         """;
 
+    protected final String SP_ROLE_UPDATE = """
+        EXEC security.spRoleUpdate @v_id = :id, @v_name = :name, @v_status = :status
+        """;
+
+    protected final String SP_ROLE_DELETE = """
+        EXEC security.spRoleDelete @v_code = :code
+        """;
+
     private final SpResultHandler spResultHandler;
 
     /**
@@ -76,8 +84,24 @@ public class RoleRepositoryAdapter extends BaseSpRepository implements RoleRepos
     }
 
     @Override
+    public Mono<RoleResponse> update(String id, RoleRequest request) {
+        final Map<String, Object> params = Map.of(
+            "id", id,
+            "name", request.getNombre(),
+            "status", request.getEstado()
+        );
+
+        return executeRoleSpMono(SP_ROLE_UPDATE, params)
+            .flatMap(this.spResultHandler::handleRoleSpResult);
+    }
+
+    @Override
     public Mono<Void> deleteById(String id) {
-        return null;
-//        return repository.deleteById(id);
+        final Map<String, Object> params = Map.of(
+            "code", id
+        );
+        return executeRoleSpMono(SP_ROLE_DELETE, params)
+            .flatMap(this.spResultHandler::handleRoleSpResult)
+            .then();
     }
 }

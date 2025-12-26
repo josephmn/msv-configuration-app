@@ -24,7 +24,6 @@ public class RoleMapper {
      */
     public RoleEntity toRoleEntity(RoleRequest request) {
         final RoleEntity entity = new RoleEntity();
-        entity.setId(request.getId());
         entity.setName(request.getNombre());
         entity.setIsActive(request.getEstado());
         return entity;
