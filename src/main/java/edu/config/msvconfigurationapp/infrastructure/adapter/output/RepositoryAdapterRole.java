@@ -18,7 +18,7 @@ import reactor.core.publisher.Mono;
  * @since 2025-12-26
  */
 @Service
-public class RoleRepositoryAdapter extends BaseSpRepository implements RoleRepositoryPort {
+public class RepositoryAdapterRole extends BaseRoleSpRepository implements RoleRepositoryPort {
 
     protected final String SP_ROLE_LIST = """
         EXEC security.spRoleList @v_post = :post, @v_code = :code
@@ -44,7 +44,7 @@ public class RoleRepositoryAdapter extends BaseSpRepository implements RoleRepos
      * @param databaseClient the DatabaseClient to use for database operations
      * @param spResultHandler the SpResultHandler to handle stored procedure results
      */
-    public RoleRepositoryAdapter(DatabaseClient databaseClient,
+    public RepositoryAdapterRole(DatabaseClient databaseClient,
                                  SpResultHandler spResultHandler) {
         super(databaseClient);
         this.spResultHandler = spResultHandler;

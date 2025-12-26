@@ -29,24 +29,24 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class RoleController {
 
-    private final RoleUseCase useCase;
+    private final RoleUseCase roleUseCase;
 
     @GetMapping
     public Mono<ResponseEntity<Flux<RoleResponse>>> getAll() {
-        return Mono.just(ResponseEntity.ok(this.useCase.findAll()))
+        return Mono.just(ResponseEntity.ok(this.roleUseCase.findAll()))
             .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/{id}")
     public Mono<ResponseEntity<RoleResponse>> getById(@PathVariable String id) {
-        return this.useCase.findById(id)
+        return this.roleUseCase.findById(id)
             .map(ResponseEntity::ok)
             .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     @PostMapping
     public Mono<ResponseEntity<RoleResponse>> save(@RequestBody RoleRequest request) {
-        return this.useCase.save(request)
+        return this.roleUseCase.save(request)
             .map(roleResponse -> ResponseEntity
                 .created(URI.create("/api/v1/roles/"))
                 .body(roleResponse))
@@ -56,14 +56,14 @@ public class RoleController {
     @PutMapping("/{id}")
     public Mono<ResponseEntity<RoleResponse>> update(@PathVariable String id,
                                                      @RequestBody RoleRequest request) {
-        return this.useCase.update(id, request)
+        return this.roleUseCase.update(id, request)
             .map(ResponseEntity::ok)
             .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
     public Mono<ResponseEntity<Void>> delete(@PathVariable String id) {
-        return this.useCase.deleteById(id)
+        return this.roleUseCase.deleteById(id)
             .then(Mono.just(ResponseEntity.ok().<Void>build()))
             .defaultIfEmpty(ResponseEntity.notFound().build());
     }

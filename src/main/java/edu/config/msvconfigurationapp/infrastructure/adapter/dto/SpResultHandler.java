@@ -1,12 +1,13 @@
 package edu.config.msvconfigurationapp.infrastructure.adapter.dto;
 
 import org.springframework.stereotype.Component;
+import edu.config.msvconfigurationapp.domain.model.CustomerResponse;
 import edu.config.msvconfigurationapp.domain.model.RoleResponse;
 import edu.config.msvconfigurationapp.infrastructure.exception.types.AlreadyExistsException;
 import edu.config.msvconfigurationapp.infrastructure.exception.types.InternalException;
 import edu.config.msvconfigurationapp.infrastructure.exception.types.NotContentException;
+import edu.config.msvconfigurationapp.infrastructure.mapper.CustomerMapper;
 import edu.config.msvconfigurationapp.infrastructure.mapper.RoleMapper;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
@@ -19,15 +20,18 @@ import reactor.core.publisher.Mono;
 @Component
 public class SpResultHandler {
 
-    private final RoleMapper mapper;
+    private final RoleMapper roleMapper;
+    private final CustomerMapper customerMapper;
 
     /**
      * Constructor for SpResultHandler.
      *
-     * @param mapper the RoleMapper to map SP results to RoleResponse
+     * @param roleMapper the RoleMapper to map SP results to RoleResponse
+     * @param customerMapper the CustomerMapper to map SP results to CustomerResponse
      */
-    public SpResultHandler(RoleMapper mapper) {
-        this.mapper = mapper;
+    public SpResultHandler(RoleMapper roleMapper, CustomerMapper customerMapper) {
+        this.roleMapper = roleMapper;
+        this.customerMapper = customerMapper;
     }
 
     /**
@@ -38,7 +42,7 @@ public class SpResultHandler {
      */
     public Mono<RoleResponse> handleRoleSpResult(RoleSpResult result) {
         return switch (result.getStatus()) {
-            case "200", "201" -> Mono.just(mapper.toRoleResponse(result));
+            case "200", "201" -> Mono.just(roleMapper.toRoleResponse(result));
             case "204" -> Mono.error(new NotContentException(result.getMessage()));
             case "409" -> Mono.error(new AlreadyExistsException(result.getMessage()));
             case "500" -> Mono.error(new InternalException(result.getMessage()));
@@ -47,12 +51,18 @@ public class SpResultHandler {
     }
 
     /**
-     * Handles the result of a role-related stored procedure and returns a Flux.
+     * Handles the result of a customer-related stored procedure.
      *
      * @param result the result from the stored procedure
-     * @return a Flux emitting the RoleResponse or an error
+     * @return a Mono emitting the CustomerResponse or an error
      */
-    public Flux<RoleResponse> handleRoleSpResultFlux(RoleSpResult result) {
-        return handleRoleSpResult(result).flux();
+    public Mono<CustomerResponse> handleCustomerSpResult(CustomerSpResult result) {
+        return switch (result.getStatus()) {
+            case "200", "201" -> Mono.just(customerMapper.toCustomerResponse(result));
+            case "204" -> Mono.error(new NotContentException(result.getMessage()));
+            case "409" -> Mono.error(new AlreadyExistsException(result.getMessage()));
+            case "500" -> Mono.error(new InternalException(result.getMessage()));
+            default -> Mono.error(new InternalException("Estado desconocido del SP: " + result.getStatus()));
+        };
     }
 }

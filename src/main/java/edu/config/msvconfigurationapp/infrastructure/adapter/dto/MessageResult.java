@@ -15,7 +15,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class RoleMessageResult {
+public class MessageResult {
     private String Status;
     private String Message;
 }

@@ -32,16 +32,16 @@ public class RoleMapper {
     /**
      * Maps a RoleSpResult object to a RoleResponse object.
      *
-     * @param SpResult the RoleSpResult object
+     * @param roleSpResult the RoleSpResult object
      * @return the mapped RoleResponse object
      */
-    public RoleResponse toRoleResponse(RoleSpResult SpResult) {
+    public RoleResponse toRoleResponse(RoleSpResult roleSpResult) {
         final RoleResponse response = new RoleResponse();
-        response.setId(SpResult.getId());
-        response.setNombre(SpResult.getName());
-        response.setEstado(SpResult.getIsActive());
-        response.setFechaCreacion(SpResult.getCreateDate());
-        response.setFechaActualizacion(SpResult.getUpdateDate());
+        response.setId(roleSpResult.getId());
+        response.setNombre(roleSpResult.getName());
+        response.setEstado(roleSpResult.getIsActive());
+        response.setFechaCreacion(roleSpResult.getCreateDate());
+        response.setFechaActualizacion(roleSpResult.getUpdateDate());
         return response;
     }
 }

@@ -13,7 +13,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class RoleSpResult extends RoleMessageResult {
+public class RoleSpResult extends MessageResult {
     private String Id;
     private String Name;
     private Boolean IsActive;
