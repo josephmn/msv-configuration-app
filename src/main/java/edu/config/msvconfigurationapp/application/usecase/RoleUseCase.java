@@ -1,13 +1,20 @@
 package edu.config.msvconfigurationapp.application.usecase;
 
+import org.springframework.stereotype.Service;
 import edu.config.msvconfigurationapp.domain.model.RoleRequest;
 import edu.config.msvconfigurationapp.domain.model.RoleResponse;
 import edu.config.msvconfigurationapp.domain.port.RoleRepositoryPort;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/**
+ * Use case class for managing roles.
+ * Provides methods to save, find, and delete roles.
+ *
+ * @author Joseph Magallanes
+ * @since 2025-12-26
+ */
 @Service
 @RequiredArgsConstructor
 public class RoleUseCase {

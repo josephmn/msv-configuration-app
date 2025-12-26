@@ -1,4 +1,4 @@
-package edu.config.msvconfigurationapp.domain.model;
+package edu.config.msvconfigurationapp.infrastructure.adapter.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -6,7 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * RoleRequest class represents a request to create or update a role.
+ * DTO for role message result.
+ *
  * @author Joseph Magallanes
  * @since 2025-12-26
  */
@@ -14,8 +15,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class RoleRequest {
-    private String id;
-    private String nombre;
-    private Boolean estado;
+public class RoleMessageResult {
+    private String Status;
+    private String Message;
 }

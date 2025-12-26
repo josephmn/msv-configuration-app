@@ -1,68 +1,83 @@
 package edu.config.msvconfigurationapp.infrastructure.adapter.output;
 
+import java.util.Map;
+import org.springframework.r2dbc.core.DatabaseClient;
+import org.springframework.stereotype.Service;
 import edu.config.msvconfigurationapp.domain.model.RoleRequest;
 import edu.config.msvconfigurationapp.domain.model.RoleResponse;
 import edu.config.msvconfigurationapp.domain.port.RoleRepositoryPort;
-import edu.config.msvconfigurationapp.infrastructure.adapter.dto.RoleSpResult;
-import edu.config.msvconfigurationapp.infrastructure.adapter.output.repository.RoleR2dbcRepository;
-import edu.config.msvconfigurationapp.infrastructure.mapper.RoleMapper;
-import lombok.RequiredArgsConstructor;
-import org.springframework.r2dbc.core.DatabaseClient;
-import org.springframework.stereotype.Service;
+import edu.config.msvconfigurationapp.infrastructure.adapter.dto.SpResultHandler;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.time.LocalDateTime;
-
+/**
+ * RoleRepositoryAdapter is an implementation of RoleRepositoryPort
+ * that interacts with the database using stored procedures.
+ *
+ * @author Joseph Magallanes
+ * @since 2025-12-26
+ */
 @Service
-@RequiredArgsConstructor
-public class RoleRepositoryAdapter implements RoleRepositoryPort {
+public class RoleRepositoryAdapter extends BaseSpRepository implements RoleRepositoryPort {
 
-    private final DatabaseClient databaseClient;
-    private final RoleR2dbcRepository repository;
-    private final RoleMapper mapper;
+    protected final String SP_ROLE_LIST = """
+        EXEC security.spRoleList @v_post = :post, @v_code = :code
+        """;
+
+    protected final String SP_ROLE_SAVE = """
+        EXEC security.spRoleSave @v_name = :name, @v_status = :status
+        """;
+
+    private final SpResultHandler spResultHandler;
+
+    /**
+     * Constructor for RoleRepositoryAdapter.
+     *
+     * @param databaseClient the DatabaseClient to use for database operations
+     * @param spResultHandler the SpResultHandler to handle stored procedure results
+     */
+    public RoleRepositoryAdapter(DatabaseClient databaseClient,
+                                 SpResultHandler spResultHandler) {
+        super(databaseClient);
+        this.spResultHandler = spResultHandler;
+    }
 
     @Override
     public Flux<RoleResponse> findAll() {
-        return null;
-//        return repository.findAll().map(mapper::toRoleResponse);
+        final Map<String, Object> params = Map.of(
+            "post", "0",
+            "code", ""
+        );
+
+        return executeRoleSpFlux(SP_ROLE_LIST, params)
+            .flatMap(this.spResultHandler::handleRoleSpResult);
     }
 
     @Override
     public Mono<RoleResponse> findById(String id) {
-        return null;
-//        return repository.findById(id).map(mapper::toRoleResponse);
+        final Map<String, Object> params = Map.of(
+            "post", "1",
+            "code", id
+        );
+
+        return executeRoleSpMono(SP_ROLE_LIST, params)
+            .flatMap(this.spResultHandler::handleRoleSpResult);
     }
 
     @Override
     public Mono<RoleResponse> save(RoleRequest request) {
+        final Map<String, Object> params = Map.of(
+            "name", request.getNombre(),
+            "status", request.getEstado()
+        );
 
-        return databaseClient.sql("""
-            EXEC security.spRole @v_nombre = :name, @v_estado = :status
-            """)
-            .bind("name", request.getNombre())
-            .bind("status", request.getEstado())
-            .map((row, meta) -> new RoleSpResult(
-                row.get("Id", String.class),
-                row.get("Name", String.class),
-                row.get("IsActive", Boolean.class),
-                row.get("CreateDate", LocalDateTime.class),
-                row.get("NewCode", String.class),
-                row.get("Message", String.class)
-            ))
-            .one()
-            .flatMap(result -> {
-
-                if (result.Message() != null && !result.Message().isBlank()) {
-                    return Mono.error(new IllegalStateException(result.Message()));
-                }
-
-                return Mono.just(mapper.toRoleResponse(result));
-            });
+        return executeRoleSpMono(SP_ROLE_SAVE, params)
+            .flatMap(this.spResultHandler::handleRoleSpResult);
     }
 
     @Override
     public Mono<Void> deleteById(String id) {
-        return repository.deleteById(id);
+        return null;
+//        return repository.deleteById(id);
     }
 }
